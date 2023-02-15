@@ -25,19 +25,28 @@ public class Etal {
 		etalOccupe = true;
 	}
 
-	public String libererEtal() {
+	public String libererEtal() throws NullPointerException {
 		etalOccupe = false;
-		StringBuilder chaine = new StringBuilder(
+		
+		try {
+			StringBuilder chaine = new StringBuilder(
 				"Le vendeur " + vendeur.getNom() + " quitte son Ã©tal, ");
-		int produitVendu = quantiteDebutMarche - quantite;
-		if (produitVendu > 0) {
-			chaine.append(
+			int produitVendu = quantiteDebutMarche - quantite;
+			if (produitVendu > 0) {
+				chaine.append(
 					"il a vendu " + produitVendu + " parmi " + produit + ".\n");
-		} else {
-			chaine.append("il n'a malheureusement rien vendu.\n");
+			} else {
+				chaine.append("il n'a malheureusement rien vendu.\n");
+			}
+			
+			return chaine.toString();
+			
+		} catch (NullPointerException e) {
+				e.printStackTrace();
+				return "Impossible de liberer un étal déjà libre!";
+			}
+		
 		}
-		return chaine.toString();
-	}
 
 	public String afficherEtal() {
 		if (etalOccupe) {
