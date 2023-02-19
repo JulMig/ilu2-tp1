@@ -43,18 +43,18 @@ public class Village {
 		}
 		
 		public Etal[] trouverEtals(String produit) {
-			int nbEtalLibre = 0;
+			int nbEtal = 0;
 			for (Etal etal : etals) {
-				if (etal.contientProduit(produit)) {
-					nbEtalLibre += 1;
+				if (etal.isEtalOccupe() && etal.contientProduit(produit)) {
+					nbEtal += 1;
 				}
 			}
 			
-			Etal[] etalProduit = new Etal[nbEtalLibre];
+			Etal[] etalProduit = new Etal[nbEtal];
 			int nbEtalPlace = 0;
 			
 			for (Etal etal : etals) {
-				if (etal.contientProduit(produit)) {
+				if (etal.isEtalOccupe() && etal.contientProduit(produit)) {
 					etalProduit[nbEtalPlace] = etal;
 					nbEtalPlace ++;
 				}
@@ -67,24 +67,26 @@ public class Village {
 		
 		public Etal trouverVendeur(Gaulois gaulois){
 			for (Etal etal : etals) {
-				if( etal.getVendeur() == gaulois) {
+				if(etal.isEtalOccupe() && etal.getVendeur() == gaulois) {
 					return etal;
 				}
 			}
 			return null;
 		}
 		
-		public void afficherMarche() {
+		public String afficherMarche() {
 			int nbEtalLibre = 0;
+			String dialogue = "";
 			
 			for(Etal etal: etals) {
 				if(etal.isEtalOccupe()) {
-					etal.afficherEtal();
+					dialogue += etal.afficherEtal();
 				} else {
 					nbEtalLibre ++;
 				}
 			}
-			System.out.println("Il reste " + nbEtalLibre +  " étals non utilisés dans le marché. \n");
+			dialogue += "Il reste " + nbEtalLibre +  " Ã©tals non utilisÃ©s dans le marchÃ©. \n";
+			return dialogue;
 		}
 		
 	}
@@ -94,9 +96,35 @@ public class Village {
 		int etalLibre = marche.trouverEtalLibre();
 		if (etalLibre != -1) {
 			marche.utiliserEtal(etalLibre, vendeur, produit, nbProduit);
-			dialogue += "\nLe vendeur " + vendeur.getNom() + " vend des " + produit + " sur l'étal n°" + etalLibre + ".";
+			dialogue += "\nLe vendeur " + vendeur.getNom() + " vend des " + produit + " sur l'ï¿½tal nï¿½" + etalLibre + ".";
 		}
+		return dialogue + "\n";
+	}
+	
+	public String rechercherVendeursProduit(String produit) {
+		String dialogue = "Les vendeurs qui proposent des " + produit + " sont :";
+		Etal[] etals = marche.trouverEtals(produit);
+		
+		for(Etal etal: etals) {
+			dialogue += "\n- " + etal.getVendeur().getNom();
+		}
+		
+		return dialogue + "\n";
+	}
+	
+	public Etal rechercherEtal(Gaulois vendeur) {
+		return marche.trouverVendeur(vendeur);
+	}
+	
+	public String partirVendeur(Gaulois vendeur) {
+		Etal etalVendeur = marche.trouverVendeur(vendeur);
+		String dialogue = etalVendeur.libererEtal();
 		return dialogue;
+	}
+	
+	public String afficherMarche() {
+		String dialogue = "Le marchÃ© du village \"" + this.nom + "\" possÃ¨de plusieurs Ã©tals : \n";
+		return dialogue + marche.afficherMarche();
 	}
 
 	
